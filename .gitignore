@@ -12,3 +12,9 @@ desktop.ini
 # Never commit API keys
 .env
 *.key
+
+# Private conversation data
+chats/
+wechat_data/
+wechat_export.zip
+wechat_account.js
