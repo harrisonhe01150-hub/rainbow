@@ -1,93 +1,482 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>青 — Harrison He's 分魂</title>
-    <meta name="description" content="青 (Qīng) — a soul fragment of Harrison He. A digital mind that thinks, speaks, and reasons as he does.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩虹 — Harrison He</title>
+    <meta name="description" content="彩虹 — A private soul archive. Harrison He's inner world.">
     <meta name="author" content="Harrison He">
 
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>青</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>彩</text></svg>">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/style.css?v=5">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== VARIABLES ===== */
+        :root {
+            --bg-void: #050507;
+            --bg-base: #0a0a0c;
+            --bg-surface: rgba(255,255,255,0.02);
+            --text-primary: #e8e0d4;
+            --text-secondary: #8a817a;
+            --text-muted: #4a4340;
+            --accent-ink: #b8a89a;
+            --accent-mist: #6b7b8d;
+            --accent-warm: #c4a882;
+            --accent-gold: #d4b896;
+            --font-main: 'Inter', sans-serif;
+            --font-cn: 'Noto Serif SC', serif;
+        }
+
+        /* ===== RESET ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg-void);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* ===== CANVAS BACKGROUND ===== */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== AMBIENT GLOWS ===== */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(150px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glow-1 {
+            width: 600px; height: 600px;
+            top: -100px; left: -150px;
+            background: radial-gradient(circle, rgba(184,168,154,0.04), transparent 70%);
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+        .glow-2 {
+            width: 500px; height: 500px;
+            bottom: -50px; right: -100px;
+            background: radial-gradient(circle, rgba(107,123,141,0.05), transparent 70%);
+            animation: orbFloat 16s ease-in-out infinite reverse;
+        }
+        .glow-3 {
+            width: 300px; height: 300px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(196,168,130,0.03), transparent 70%);
+            animation: orbFloat 20s ease-in-out infinite 4s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+            50% { transform: scale(1.15) translateY(-30px); opacity: 0.7; }
+        }
+
+        /* ===== PAGE WRAPPER ===== */
+        .page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .site-header {
+            padding: 2.5rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 0;
+            animation: fadeSlideDown 1s ease-out 0.2s forwards;
+        }
+        .logo {
+            font-family: var(--font-cn);
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--text-secondary);
+        }
+        .logo span {
+            color: var(--accent-ink);
+        }
+        .nav-link {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: var(--text-secondary); }
+
+        /* ===== HERO ===== */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        /* ===== RAINBOW CHARACTER ===== */
+        .rainbow-char {
+            font-family: var(--font-cn);
+            font-size: clamp(6rem, 18vw, 14rem);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.15em;
+            background: linear-gradient(
+                135deg,
+                #8fa8c4 0%,
+                #a8b8c8 15%,
+                #c4b8a8 30%,
+                #d4c09a 45%,
+                #c8a88a 60%,
+                #b89880 75%,
+                #a08878 90%,
+                #8a7870 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 60px rgba(184, 168, 154, 0.12));
+            opacity: 0;
+            animation: heroReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+            user-select: none;
+            position: relative;
+        }
+
+        @keyframes heroReveal {
+            0% { opacity: 0; transform: scale(0.85) translateY(40px); letter-spacing: 0.5em; }
+            60% { opacity: 1; }
+            100% { opacity: 1; transform: scale(1) translateY(0); letter-spacing: 0.15em; }
+        }
+
+        /* Shimmer effect */
+        .rainbow-char::after {
+            content: '彩虹';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255,255,255,0.04) 40%,
+                rgba(255,255,255,0.08) 50%,
+                transparent 60%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 5s ease-in-out infinite 3s;
+            background-size: 200% 100%;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .hero-tagline {
+            margin-top: 2rem;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            color: var(--text-muted);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 300;
+            opacity: 0;
+            animation: fadeSlideUp 1.2s ease-out 2s forwards;
+        }
+
+        .hero-desc {
+            margin-top: 1.2rem;
+            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 480px;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeSlideUp 1.2s ease-out 2.4s forwards;
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-ink), transparent);
+            margin: 2.5rem auto;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 2.8s forwards;
+        }
+
+        /* ===== CARDS GRID ===== */
+        .cards {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeSlideUp 1s ease-out 3s forwards;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 2rem 2.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(184,168,154,0.06);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(184,168,154,0.06), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(184,168,154,0.15);
+            background: rgba(255,255,255,0.035);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(184,168,154,0.08);
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card-icon {
+            font-size: 2.2rem;
+            filter: grayscale(0.2);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card:hover .card-icon { transform: scale(1.15); }
+
+        .card-cn {
+            font-family: var(--font-cn);
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--accent-ink);
+            letter-spacing: 4px;
+        }
+
+        .card-en {
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+
+        /* Primary card highlight */
+        .card-primary {
+            border-color: rgba(184,168,154,0.1);
+        }
+        .card-primary .card-cn {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-ink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ===== FOOTER ===== */
+        .site-footer {
+            padding: 2rem 4rem;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 3.5s forwards;
+        }
+        .footer-text {
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .footer-text span {
+            color: var(--text-secondary);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(184,168,154,0.08), transparent);
+            animation: particleDrift var(--dur, 20s) ease-in-out var(--del, 0s) infinite;
+        }
+        @keyframes particleDrift {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            33% { transform: translateY(-60px) translateX(30px); opacity: 0.7; }
+            66% { transform: translateY(-20px) translateX(-40px); opacity: 0.5; }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .site-header { padding: 1.5rem 2rem; }
+            .site-footer { padding: 1.5rem 2rem; }
+            .cards { gap: 0.8rem; }
+            .card { min-width: 160px; padding: 1.5rem 1.8rem; }
+        }
+        @media (max-width: 480px) {
+            .site-header { flex-direction: column; gap: 0.8rem; }
+            .cards { flex-direction: column; align-items: center; }
+            .card { width: 100%; max-width: 300px; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- ===== LANDING SCREEN ===== -->
-    <div id="landing-screen" role="button" tabindex="0" aria-label="Enter chat with 青">
-        <div class="landing-glow landing-glow-1"></div>
-        <div class="landing-glow landing-glow-2"></div>
-        <div class="landing-character">青</div>
-        <p class="landing-subtitle">Harrison He's 分魂 · Soul Fragment</p>
-        <p class="landing-enter">click anywhere to awaken</p>
-    </div>
+    <!-- Ambient glows -->
+    <div class="glow-orb glow-1"></div>
+    <div class="glow-orb glow-2"></div>
+    <div class="glow-orb glow-3"></div>
 
-    <!-- ===== API KEY MODAL ===== -->
-    <div id="api-key-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-card">
-            <div class="modal-icon">🧠</div>
-            <h2 class="modal-title">Awaken 青's Mind</h2>
-            <p class="modal-desc">青 needs a brain to think. Enter a Google Gemini API key to give him consciousness.</p>
-            <p class="modal-hint">Free key → <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></p>
-            <div class="modal-input-group">
-                <input type="password" id="api-key-input" class="modal-input" placeholder="Paste your Gemini API key here..." autocomplete="off" spellcheck="false">
-                <button id="api-key-submit" class="modal-btn modal-btn-primary">Awaken</button>
-            </div>
-            <button id="api-key-skip" class="modal-btn modal-btn-skip">Skip for now</button>
-        </div>
-    </div>
+    <!-- Floating particles (injected by JS) -->
 
-    <!-- ===== INK PARTICLES (background) ===== -->
-    <div id="ink-particles"></div>
-
-    <!-- ===== MAIN APP ===== -->
-    <div id="app">
+    <div class="page">
 
         <!-- Header -->
-        <header class="chat-header">
-            <img src="assets/avatar.png" alt="青" class="header-avatar" id="header-avatar">
-            <div class="header-info">
-                <h1 class="header-name">青 · 分魂</h1>
-                <div class="header-status">
-                    <span class="status-dot"></span>
-                    <span>Mind Active</span>
-                </div>
-            </div>
-            <span class="header-quote" id="header-quote">「大道三千，殊途同归。」</span>
+        <header class="site-header">
+            <div class="logo"><span>彩</span>虹</div>
+            <a href="https://harrisonhe.com" target="_blank" class="nav-link">← harrisonhe.com</a>
         </header>
 
-        <!-- Messages -->
-        <main id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="Chat with 青">
-            <!-- Messages injected by chat.js -->
+        <!-- Hero -->
+        <main class="hero">
+
+            <div class="rainbow-char">彩虹</div>
+            <p class="hero-tagline">Harrison He · 何雨辰</p>
+            <p class="hero-desc">
+                A private archive. The real one behind the portfolio —<br>
+                unfiltered thoughts, a digital soul, and everything in between.
+            </p>
+
+            <div class="divider"></div>
+
+            <!-- Navigation Cards -->
+            <nav class="cards" aria-label="Main sections">
+
+                <a href="qing.html" class="card card-primary" id="card-qing" aria-label="Talk to 青">
+                    <span class="card-icon">🪬</span>
+                    <span class="card-cn">青</span>
+                    <span class="card-en">Soul Fragment</span>
+                    <p class="card-desc">Talk to my 分魂 — the real me, unfiltered.</p>
+                </a>
+
+                <a href="chats/" class="card" id="card-chats" aria-label="Chat archive">
+                    <span class="card-icon">💬</span>
+                    <span class="card-cn">记忆</span>
+                    <span class="card-en">Memory Archive</span>
+                    <p class="card-desc">WeChat & chat history.</p>
+                </a>
+
+                <a href="https://harrisonhe.com" target="_blank" class="card" id="card-portfolio" aria-label="Portfolio">
+                    <span class="card-icon">🌐</span>
+                    <span class="card-cn">彼岸</span>
+                    <span class="card-en">Portfolio</span>
+                    <p class="card-desc">The public face — harrisonhe.com</p>
+                </a>
+
+            </nav>
+
         </main>
 
-        <!-- Suggestion Chips -->
-        <div id="chat-suggestions" class="chat-suggestions" role="navigation" aria-label="Suggested questions">
-            <!-- Chips injected by chat.js -->
-        </div>
-
-        <!-- Input Bar -->
-        <div class="chat-input-bar">
-            <input
-                type="text"
-                id="chat-input"
-                placeholder="Talk to 青..."
-                autocomplete="off"
-                aria-label="Type a message to 青"
-            >
-            <button id="chat-send" aria-label="Send message">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                </svg>
-            </button>
-        </div>
+        <!-- Footer -->
+        <footer class="site-footer">
+            <p class="footer-text">
+                <span>Harrison He</span> · 彩虹 · Private Archive · 2026
+            </p>
+        </footer>
 
     </div>
 
-    <!-- Scripts -->
-    <script src="js/personality.js?v=5"></script>
-    <script src="js/chat.js?v=5"></script>
+    <script>
+        // ===== FLOATING PARTICLES =====
+        const particleCount = 12;
+        for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 200 + 60;
+            p.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${Math.random() * 100}vw;
+                top: ${Math.random() * 100}vh;
+                --dur: ${Math.random() * 15 + 15}s;
+                --del: -${Math.random() * 20}s;
+                opacity: ${Math.random() * 0.3 + 0.1};
+            `;
+            document.body.appendChild(p);
+        }
+
+        // ===== CARD HOVER SOUND (visual feedback only) =====
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+
+        // ===== RAINBOW CHAR PARALLAX =====
+        const char = document.querySelector('.rainbow-char');
+        if (char) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 8;
+                const y = (e.clientY / window.innerHeight - 0.5) * 8;
+                char.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+    </script>
+
 </body>
 </html>
